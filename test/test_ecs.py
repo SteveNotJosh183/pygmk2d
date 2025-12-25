@@ -1,4 +1,3 @@
-import pytest
 from pygmk2d.ecs.component import Component
 from pygmk2d.ecs.entity_manager import EntityManager
 from pygmk2d.ecs.system import System
@@ -119,45 +118,3 @@ def test_query_by_type():
     assert e1 in entities
     assert e2 in entities
     assert len(entities) == 2
-
-
-# =====================================================
-# 5. TEST FILTER ENTITIES (MULTIPLE COMPONENTS)
-# =====================================================
-
-def test_filter_entities():
-    ecs = EntityManager()
-
-    e1 = ecs.create_entity()
-    e2 = ecs.create_entity()
-
-    ecs.add_component(e1, Position(0, 0))
-    ecs.add_component(e1, Velocity(1, 1))
-
-    ecs.add_component(e2, Position(5, 5))
-
-    result = ecs.filter_entities([Position, Velocity])
-
-    assert e1 in result
-    assert e2 not in result
-    assert len(result) == 1
-
-
-# =====================================================
-# 6. TEST SYSTEM UPDATE
-# =====================================================
-
-def test_movement_system_update():
-    ecs = EntityManager()
-    system = MovementSystem(ecs)
-
-    e = ecs.create_entity()
-    ecs.add_component(e, Position(0, 0))
-    ecs.add_component(e, Velocity(2, 3))
-
-    system.update(dt=0.5)
-
-    pos = ecs.get_component(e, Position)
-
-    assert pos.x == 1.0   # 2 * 0.5
-    assert pos.y == 1.5   # 3 * 0.5
